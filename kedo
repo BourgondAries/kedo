@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+# if docker ps -a | grep kedo >&/dev/null; then
+# fi
+if which git >&/dev/null; then
+	if [[ -d ~/tmp/kedo ]]; then
+		rm -rf ~/tmp/kedo
+	fi
+	git clone https://github.com/BourgondAries/kedo ~/tmp/kedo
+else
+	echo git not found
+	exit 1
+fi
+if ! which docker >&/dev/null; then
+	echo docker not found
+	exit 1
+fi
+
+GID="$(getent group docker | cut -f 3 -d ':')"
+echo $?
+
+docker run -e USERID=$UID -e DOCKID=$GID -it -h kedo -v "$HOME"/stuf:/home/user/stuf -v /var/run/docker.sock:/var/run/docker.sock --net=host --privileged kedo

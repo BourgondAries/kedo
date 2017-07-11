@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+set -e
+if [[ "$USERID" -eq 0 ]]; then
+    USERID=1000
+fi
+groupdel docker
+groupadd docker -g $DOCKID
+useradd -m user -u $USERID
+gpasswd -a user docker
+mkdir -p /home/user
+chown -R user /home/user
+su user <<EOF
+if [[ -e ~/stuf/alph/install ]]; then
+	~/stuf/alph/install y <<< y > /dev/null
+fi
+EOF
+su user
